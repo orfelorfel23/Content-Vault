@@ -49,6 +49,9 @@ const ContentViewer = () => {
     return <BlockedPage error={error} />;
   }
 
+  // PDFs erkennen (Endung .pdf oder Content-Hint in URL)
+  const isPdf = /\.pdf($|\?|#)/i.test(targetUrl);
+
   return (
     <div className="h-screen w-screen overflow-hidden">
       {label && (
@@ -56,12 +59,22 @@ const ContentViewer = () => {
           <title>{label}</title>
         </div>
       )}
-      <iframe
-        src={targetUrl}
-        className="h-full w-full border-0"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        title={label || "Lerninhalt"}
-      />
+      {isPdf ? (
+        // Für PDFs KEIN sandbox-Attribut – sonst blockt Chrome das PDF-Plugin.
+        // #toolbar=1 aktiviert die native PDF-Toolbar im Browser.
+        <iframe
+          src={`${targetUrl}#toolbar=1&navpanes=0`}
+          className="h-full w-full border-0"
+          title={label || "Lerninhalt"}
+        />
+      ) : (
+        <iframe
+          src={targetUrl}
+          className="h-full w-full border-0"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          title={label || "Lerninhalt"}
+        />
+      )}
     </div>
   );
 };
