@@ -53,20 +53,62 @@ const ContentViewer = () => {
   const isPdf = /\.pdf($|\?|#)/i.test(targetUrl);
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    <div className="h-screen w-screen overflow-hidden flex flex-col bg-background">
       {label && (
         <div className="h-0 overflow-hidden">
           <title>{label}</title>
         </div>
       )}
       {isPdf ? (
-        // Für PDFs KEIN sandbox-Attribut – sonst blockt Chrome das PDF-Plugin.
-        // #toolbar=1 aktiviert die native PDF-Toolbar im Browser.
-        <iframe
-          src={`${targetUrl}#toolbar=1&navpanes=0`}
-          className="h-full w-full border-0"
-          title={label || "Lerninhalt"}
-        />
+        <>
+          {/* Toolbar mit Fallback-Aktionen, falls das Embed blockiert wird */}
+          <div className="flex items-center justify-between gap-2 border-b bg-card px-4 py-2 text-sm">
+            <span className="truncate font-medium text-foreground">
+              {label || "PDF-Dokument"}
+            </span>
+            <div className="flex gap-2">
+              <a
+                href={targetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-border bg-background px-3 py-1.5 text-foreground hover:bg-accent"
+              >
+                In neuem Tab öffnen
+              </a>
+              <a
+                href={targetUrl}
+                download
+                className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground hover:opacity-90"
+              >
+                Herunterladen
+              </a>
+            </div>
+          </div>
+          {/* <object> nutzt das native PDF-Plugin und respektiert keine sandbox-Restriktionen.
+              Wenn der Server X-Frame-Options/CSP setzt, kommt der Inhalt im <object>-Body als Fallback. */}
+          <object
+            data={`${targetUrl}#toolbar=1&navpanes=0`}
+            type="application/pdf"
+            className="h-full w-full flex-1"
+          >
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center">
+              <p className="text-foreground">
+                Dein Browser kann dieses PDF nicht direkt anzeigen.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Vermutlich blockiert der Server das Einbetten (X-Frame-Options / CSP).
+              </p>
+              <a
+                href={targetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:opacity-90"
+              >
+                PDF in neuem Tab öffnen
+              </a>
+            </div>
+          </object>
+        </>
       ) : (
         <iframe
           src={targetUrl}
