@@ -1,4 +1,4 @@
-# Zugangsschutz – Lerninhalt-Plattform
+# Content Vault – Pfadbasierte Zugriffskontrolle
 
 Pfadbasierte Zugriffskontrolle für iFrame-eingebettete Lerninhalte. Admins legen Benutzer mit Zeit- und Aufruflimits an; Benutzer greifen über `lerninhalt.domain.de/<benutzername>` auf ihre Inhalte zu. Die tatsächlichen Ziel-URLs werden niemals an den Browser ausgeliefert, sondern erst nach serverseitiger Validierung im iFrame geladen.
 
@@ -48,16 +48,16 @@ sudo -u postgres psql
 ```
 
 ```sql
-CREATE DATABASE zugangsschutz;
-CREATE USER zugangsschutz WITH ENCRYPTED PASSWORD 'GEHEIM';
-GRANT ALL PRIVILEGES ON DATABASE zugangsschutz TO zugangsschutz;
+CREATE DATABASE content_vault;
+CREATE USER content_vault WITH ENCRYPTED PASSWORD 'GEHEIM';
+GRANT ALL PRIVILEGES ON DATABASE content_vault TO content_vault;
 \q
 ```
 
 Danach das mitgelieferte `schema.sql` ausführen:
 
 ```bash
-psql -U zugangsschutz -d zugangsschutz -f schema.sql
+psql -U content_vault -d content_vault -f schema.sql
 ```
 
 **Tabellen:**
@@ -76,13 +76,13 @@ cd express-api
 npm install
 cp .env.example .env
 # .env bearbeiten (siehe unten)
-node index.js     # oder: pm2 start index.js --name zugangsschutz-api
+node index.js     # oder: pm2 start index.js --name content-vault-api
 ```
 
 **`.env`:**
 ```env
 PORT=3001
-DATABASE_URL=postgres://zugangsschutz:GEHEIM@localhost:5432/zugangsschutz
+DATABASE_URL=postgres://content_vault:GEHEIM@localhost:5432/content_vault
 ADMIN_PASSWORD=DeinSicheresAdminPasswort
 JWT_SECRET=ein-langer-zufaelliger-string
 CORS_ORIGIN=https://admin.domain.de,https://lerninhalt.domain.de
@@ -132,7 +132,7 @@ Beispiel `/etc/caddy/Caddyfile`:
 ```caddy
 # Admin-Panel (gleiche statische App, Modus über Hostname)
 admin.domain.de {
-    root * /var/www/zugangsschutz/dist
+    root * /var/www/content-vault/dist
     try_files {path} /index.html
     file_server
     encode gzip
@@ -140,7 +140,7 @@ admin.domain.de {
 
 # Content-Viewer
 lerninhalt.domain.de {
-    root * /var/www/zugangsschutz/dist
+    root * /var/www/content-vault/dist
     try_files {path} /index.html
     file_server
     encode gzip

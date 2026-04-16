@@ -161,7 +161,7 @@ const AdminPanel = ({ onLogout }: Props) => {
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Zugangsschutz – Admin</h1>
+          <h1 className="text-2xl font-bold text-foreground">Content Vault – Admin</h1>
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" /> Abmelden
           </Button>
