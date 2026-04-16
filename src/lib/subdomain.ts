@@ -2,16 +2,16 @@ export type AppMode = "admin" | "content" | "unknown";
 
 export function getAppMode(): AppMode {
   const hostname = window.location.hostname;
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode");
 
-  // Local dev: use query param ?mode=admin or default to content
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode");
-    if (mode === "admin") return "admin";
-    return "content";
-  }
+  // Query param override (for dev/preview)
+  if (mode === "admin") return "admin";
 
-  // Preview/production: detect by subdomain
+  // Local dev: default to content
+  if (hostname === "localhost" || hostname === "127.0.0.1") return "content";
+
+  // Production: detect by subdomain
   if (hostname.startsWith("admin.")) return "admin";
   return "content";
 }
