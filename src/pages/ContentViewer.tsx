@@ -54,7 +54,19 @@ const ContentViewer = () => {
   const proxyUrl = username ? getProxyUrl(username, contentPath) : targetUrl;
 
   return (
-...
+    <div className="h-screen w-screen overflow-hidden flex flex-col bg-background">
+      {label && (
+        <div className="h-0 overflow-hidden">
+          <title>{label}</title>
+        </div>
+      )}
+      {isPdf ? (
+        <>
+          <div className="flex items-center justify-between gap-2 border-b bg-card px-4 py-2 text-sm">
+            <span className="truncate font-medium text-foreground">
+              {label || "PDF-Dokument"}
+            </span>
+            <div className="flex gap-2">
               <a
                 href={proxyUrl}
                 target="_blank"
