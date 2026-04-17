@@ -125,6 +125,12 @@ export async function getLogs(linkId: string): Promise<AccessLog[]> {
   return res.json();
 }
 
+// --- Proxy ---
+export function getProxyUrl(username: string, path: string): string {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_URL}/api/proxy/${encodeURIComponent(username)}${cleanPath}`;
+}
+
 // --- Public Validate ---
 export interface ValidateResult {
   target_url: string;
