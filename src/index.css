@@ -159,9 +159,9 @@ All colors MUST be HSL.
   }
   .fire-glow {
     background:
-      radial-gradient(ellipse at top, hsl(var(--fire-red) / 0.25) 0%, transparent 55%),
-      radial-gradient(ellipse at bottom, hsl(var(--fire-red-glow) / 0.18) 0%, transparent 55%),
-      linear-gradient(180deg, hsl(var(--fire-darker)) 0%, hsl(var(--fire-dark)) 100%);
+      radial-gradient(ellipse at top, hsl(var(--fire-red) / 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom, hsl(var(--fire-red-glow) / 0.25) 0%, transparent 55%),
+      linear-gradient(180deg, hsl(222 60% 3%) 0%, hsl(222 50% 6%) 100%);
   }
 }
 
