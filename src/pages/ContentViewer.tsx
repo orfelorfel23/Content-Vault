@@ -130,7 +130,6 @@ const ContentViewer = () => {
         <iframe
           src={targetUrl}
           className="h-full w-full border-0"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           title={label || "Lerninhalt"}
         />
       )}
