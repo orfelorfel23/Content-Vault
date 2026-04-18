@@ -16,12 +16,23 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, LogOut, Eye, Route, FileText, ExternalLink } from "lucide-react";
+import { Plus, Trash2, LogOut, Eye, Route, FileText, ExternalLink, Pencil, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   onLogout: () => void;
 }
+
+const DEFAULT_TARGET_URL = "https://erkw.orfel.de";
+const PUBLIC_HOST = "cbrn.orfel.de";
+
+// Konvertiert ISO-String -> "YYYY-MM-DDTHH:mm" für datetime-local
+const toLocalInput = (iso: string | null) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const AdminPanel = ({ onLogout }: Props) => {
   const [links, setLinks] = useState<AccessLink[]>([]);
@@ -34,7 +45,7 @@ const AdminPanel = ({ onLogout }: Props) => {
   // Create form
   const [newUsername, setNewUsername] = useState("");
   const [newLabel, setNewLabel] = useState("");
-  const [newTargetUrl, setNewTargetUrl] = useState("");
+  const [newTargetUrl, setNewTargetUrl] = useState(DEFAULT_TARGET_URL);
   const [newMaxViews, setNewMaxViews] = useState("");
   const [newExpiresAt, setNewExpiresAt] = useState("");
 
@@ -42,6 +53,13 @@ const AdminPanel = ({ onLogout }: Props) => {
   const [newPath, setNewPath] = useState("");
   const [newRouteUrl, setNewRouteUrl] = useState("");
   const [newRouteLabel, setNewRouteLabel] = useState("");
+
+  // Edit form
+  const [editingLink, setEditingLink] = useState<AccessLink | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editTargetUrl, setEditTargetUrl] = useState("");
+  const [editMaxViews, setEditMaxViews] = useState("");
+  const [editExpiresAt, setEditExpiresAt] = useState("");
 
   const loadLinks = useCallback(async () => {
     try {
@@ -63,11 +81,49 @@ const AdminPanel = ({ onLogout }: Props) => {
         expires_at: newExpiresAt || null,
       });
       setShowCreate(false);
-      setNewUsername(""); setNewLabel(""); setNewTargetUrl(""); setNewMaxViews(""); setNewExpiresAt("");
+      setNewUsername(""); setNewLabel(""); setNewTargetUrl(DEFAULT_TARGET_URL); setNewMaxViews(""); setNewExpiresAt("");
       loadLinks();
       toast({ title: "Benutzer erstellt" });
     } catch {
       toast({ title: "Fehler", description: "Erstellen fehlgeschlagen", variant: "destructive" });
+    }
+  };
+
+  const openEdit = (link: AccessLink) => {
+    setEditingLink(link);
+    setEditLabel(link.label || "");
+    setEditTargetUrl(link.target_url_base);
+    setEditMaxViews(link.max_views?.toString() || "");
+    setEditExpiresAt(toLocalInput(link.expires_at));
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingLink) return;
+    try {
+      const updated = await updateLink(editingLink.id, {
+        label: editLabel || null,
+        target_url_base: editTargetUrl,
+        max_views: editMaxViews ? parseInt(editMaxViews) : null,
+        expires_at: editExpiresAt || null,
+      });
+      setEditingLink(null);
+      if (selectedLink?.id === updated.id) setSelectedLink(updated);
+      loadLinks();
+      toast({ title: "Gespeichert" });
+    } catch {
+      toast({ title: "Fehler", description: "Speichern fehlgeschlagen", variant: "destructive" });
+    }
+  };
+
+  const handleResetEditViews = async () => {
+    if (!editingLink) return;
+    try {
+      const updated = await updateLink(editingLink.id, { views_count: 0 });
+      setEditingLink(updated);
+      loadLinks();
+      toast({ title: "Aufrufe zurückgesetzt" });
+    } catch {
+      toast({ title: "Fehler", variant: "destructive" });
     }
   };
 
@@ -181,7 +237,7 @@ const AdminPanel = ({ onLogout }: Props) => {
                   <div>
                     <Label>Username (URL-Pfad)</Label>
                     <Input placeholder="z.B. max" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} />
-                    <p className="mt-1 text-xs text-muted-foreground">Erreichbar unter: lerninhalt.domain.de/{newUsername || "…"}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Erreichbar unter: {PUBLIC_HOST}/{newUsername || "{username}"}</p>
                   </div>
                   <div>
                     <Label>Bezeichnung</Label>
@@ -189,7 +245,7 @@ const AdminPanel = ({ onLogout }: Props) => {
                   </div>
                   <div>
                     <Label>Ziel-URL (iFrame Basis)</Label>
-                    <Input placeholder="https://lerninhalte.example.com" value={newTargetUrl} onChange={(e) => setNewTargetUrl(e.target.value)} />
+                    <Input placeholder={DEFAULT_TARGET_URL} value={newTargetUrl} onChange={(e) => setNewTargetUrl(e.target.value)} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -246,6 +302,13 @@ const AdminPanel = ({ onLogout }: Props) => {
                       <div className="flex justify-end gap-1">
                         <Button
                           variant="ghost" size="icon"
+                          onClick={(e) => { e.stopPropagation(); openEdit(link); }}
+                          title="Bearbeiten"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost" size="icon"
                           onClick={(e) => { e.stopPropagation(); handleResetViews(link); }}
                           title="Aufrufe zurücksetzen"
                         >
@@ -273,6 +336,55 @@ const AdminPanel = ({ onLogout }: Props) => {
             </Table>
           </CardContent>
         </Card>
+
+        {/* Edit Dialog */}
+        <Dialog open={!!editingLink} onOpenChange={(o) => !o && setEditingLink(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Benutzer bearbeiten</DialogTitle>
+            </DialogHeader>
+            {editingLink && (
+              <div className="space-y-4">
+                <div>
+                  <Label>Username (nicht änderbar)</Label>
+                  <Input value={editingLink.username} disabled className="font-mono" />
+                  <p className="mt-1 text-xs text-muted-foreground">Erreichbar unter: {PUBLIC_HOST}/{editingLink.username}</p>
+                </div>
+                <div>
+                  <Label>Bezeichnung</Label>
+                  <Input value={editLabel} onChange={(e) => setEditLabel(e.target.value)} />
+                </div>
+                <div>
+                  <Label>Ziel-URL (iFrame Basis)</Label>
+                  <Input value={editTargetUrl} onChange={(e) => setEditTargetUrl(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Max. Aufrufe (leer = unbegrenzt)</Label>
+                    <Input type="number" value={editMaxViews} onChange={(e) => setEditMaxViews(e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Ablaufdatum (leer = kein Limit)</Label>
+                    <Input type="datetime-local" value={editExpiresAt} onChange={(e) => setEditExpiresAt(e.target.value)} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between rounded-md border border-border bg-muted/30 px-3 py-2">
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Aufrufe: </span>
+                    <span className="font-medium">{editingLink.views_count}{editingLink.max_views !== null ? ` / ${editingLink.max_views}` : ""}</span>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={handleResetEditViews}>
+                    <RotateCcw className="mr-2 h-3.5 w-3.5" /> Zurücksetzen
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={() => setEditingLink(null)}>Abbrechen</Button>
+                  <Button className="flex-1" onClick={handleSaveEdit} disabled={!editTargetUrl}>Speichern</Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Detail Panel */}
         {selectedLink && (

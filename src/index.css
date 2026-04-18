@@ -91,6 +91,77 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Feuerwehr / Blocked-Page Tokens */
+    --fire-red: 0 78% 48%;
+    --fire-red-glow: 8 90% 56%;
+    --fire-amber: 42 96% 55%;
+    --fire-dark: 222 40% 8%;
+    --fire-darker: 222 45% 5%;
+    --fire-surface: 222 35% 12%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --fire-red: 0 82% 55%;
+    --fire-red-glow: 8 95% 62%;
+    --fire-amber: 42 96% 60%;
+    --fire-dark: 222 50% 4%;
+    --fire-darker: 222 60% 2%;
+    --fire-surface: 222 40% 9%;
+  }
+}
+
+@layer utilities {
+  .fire-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      hsl(var(--fire-amber) / 0.08) 0px,
+      hsl(var(--fire-amber) / 0.08) 14px,
+      transparent 14px,
+      transparent 28px
+    );
+  }
+  .fire-glow {
+    background:
+      radial-gradient(ellipse at top, hsl(var(--fire-red) / 0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom, hsl(var(--fire-red-glow) / 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, hsl(var(--fire-darker)) 0%, hsl(var(--fire-dark)) 100%);
   }
 }
 
