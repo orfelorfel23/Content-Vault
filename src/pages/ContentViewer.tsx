@@ -15,6 +15,18 @@ const ContentViewer = () => {
   const username = extractUsername(location.pathname);
   const contentPath = extractContentPath(location.pathname);
 
+  // Favicon dynamisch vom iFrame-Ziel übernehmen
+  useEffect(() => {
+    if (!targetUrl) return;
+    try {
+      const origin = new URL(targetUrl).origin;
+      const link = document.getElementById("favicon") as HTMLLinkElement | null;
+      if (link) link.href = `${origin}/favicon.ico`;
+    } catch {
+      /* ignore */
+    }
+  }, [targetUrl]);
+
   useEffect(() => {
     if (!username) {
       setError("no_user");
