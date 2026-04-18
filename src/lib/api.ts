@@ -43,9 +43,21 @@ export interface AccessLink {
   created_at: string;
 }
 
+function handleAuthError(res: Response) {
+  if (res.status === 401 || res.status === 403) {
+    sessionStorage.removeItem("admin_token");
+    // Reload, damit AdminLogin wieder angezeigt wird
+    if (typeof window !== "undefined") window.location.reload();
+    throw new Error("Sitzung abgelaufen – bitte erneut einloggen");
+  }
+}
+
 export async function getLinks(): Promise<AccessLink[]> {
   const res = await fetch(`${API_URL}/api/admin/links`, { headers: authHeaders() });
-  if (!res.ok) throw new Error("Fehler beim Laden");
+  if (!res.ok) {
+    handleAuthError(res);
+    throw new Error("Fehler beim Laden");
+  }
   return res.json();
 }
 
