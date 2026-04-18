@@ -57,7 +57,7 @@ const BlockedPage = ({ error }: Props) => {
   const { Icon } = cfg;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden fire-glow p-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden fire-glow p-4 text-primary-foreground bg-primary">
       {/* Diagonale Warnstreifen — sehr dezent */}
       <div className="absolute inset-0 fire-stripes pointer-events-none" />
 
@@ -66,7 +66,7 @@ const BlockedPage = ({ error }: Props) => {
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-[hsl(var(--fire-amber))]" />
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-2xl border border-[hsl(var(--fire-red)/0.3)] bg-[hsl(var(--fire-surface)/0.85)] p-8 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-2xl border border-[hsl(var(--fire-red)/0.3)] bg-[hsl(var(--fire-surface)/0.85)] p-8 shadow-2xl backdrop-blur-xl text-primary-foreground bg-primary">
           {/* Roter Akzent oben */}
           <div className="absolute -top-px left-8 right-8 h-1 rounded-full bg-gradient-to-r from-transparent via-[hsl(var(--fire-red))] to-transparent" />
 
@@ -74,12 +74,12 @@ const BlockedPage = ({ error }: Props) => {
           <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center">
             <div className="absolute inset-0 animate-ping rounded-full bg-[hsl(var(--fire-red)/0.35)]" />
             <div className="absolute inset-2 rounded-full bg-[hsl(var(--fire-red)/0.15)]" />
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-[hsl(var(--fire-red))] bg-[hsl(var(--fire-darker))] shadow-[0_0_40px_hsl(var(--fire-red)/0.6)]">
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-[hsl(var(--fire-red))] bg-[hsl(var(--fire-darker))] shadow-[0_0_40px_hsl(var(--fire-red)/0.6)] border-primary-foreground">
               <Icon className="h-10 w-10 text-[hsl(var(--fire-red-glow))]" strokeWidth={2.2} />
             </div>
           </div>
 
-          <p className="mb-2 text-center font-mono text-xs font-semibold tracking-[0.2em] text-[hsl(var(--fire-amber))]">
+          <p className="mb-2 text-center font-mono text-xs font-semibold tracking-[0.2em] text-[hsl(var(--fire-amber))] text-primary-foreground">
             {cfg.code}
           </p>
           <h1 className="mb-3 text-center text-3xl font-black uppercase tracking-wider text-white">
