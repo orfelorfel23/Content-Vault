@@ -19,9 +19,33 @@ const ContentViewer = () => {
   useEffect(() => {
     if (!targetUrl) return;
     try {
-      const origin = new URL(targetUrl).origin;
-      const link = document.getElementById("favicon") as HTMLLinkElement | null;
-      if (link) link.href = `${origin}/favicon.ico`;
+      const url = new URL(targetUrl);
+      const domain = url.hostname;
+      const origin = url.origin;
+
+      const setFavicon = (href: string) => {
+        // Alte Favicons entfernen, damit der Browser den neuen Wert nimmt
+        document
+          .querySelectorAll("link[rel~='icon']")
+          .forEach((el) => el.parentNode?.removeChild(el));
+        const link = document.createElement("link");
+        link.id = "favicon";
+        link.rel = "icon";
+        link.href = href;
+        document.head.appendChild(link);
+      };
+
+      // 1. Versuch: direkt /favicon.ico vom Ziel-Origin
+      const directHref = `${origin}/favicon.ico`;
+      const tester = new Image();
+      tester.onload = () => setFavicon(directHref);
+      tester.onerror = () => {
+        // 2. Fallback: Google Favicon-Service (funktioniert für fast alle Domains)
+        setFavicon(
+          `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
+        );
+      };
+      tester.src = directHref;
     } catch {
       /* ignore */
     }
