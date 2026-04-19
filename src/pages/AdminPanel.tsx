@@ -274,6 +274,21 @@ const AdminPanel = ({ onLogout }: Props) => {
                       <Input type="datetime-local" value={newExpiresAt} onChange={(e) => setNewExpiresAt(e.target.value)} />
                     </div>
                   </div>
+                  <div className="space-y-3 rounded-md border border-border bg-muted/30 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vorschau (WhatsApp / Social Media)</p>
+                    <div>
+                      <Label className="text-xs">Titel</Label>
+                      <Input placeholder="z.B. Schulungsunterlagen" value={newOgTitle} onChange={(e) => setNewOgTitle(e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Beschreibung</Label>
+                      <Input placeholder="Kurzbeschreibung" value={newOgDescription} onChange={(e) => setNewOgDescription(e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Bild-URL</Label>
+                      <Input placeholder="https://.../bild.png" value={newOgImage} onChange={(e) => setNewOgImage(e.target.value)} />
+                    </div>
+                  </div>
                   <Button onClick={handleCreate} className="w-full" disabled={!newUsername || !newTargetUrl}>
                     Erstellen
                   </Button>
@@ -383,6 +398,21 @@ const AdminPanel = ({ onLogout }: Props) => {
                   <div>
                     <Label>Ablaufdatum (leer = kein Limit)</Label>
                     <Input type="datetime-local" value={editExpiresAt} onChange={(e) => setEditExpiresAt(e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-3 rounded-md border border-border bg-muted/30 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vorschau (WhatsApp / Social Media)</p>
+                  <div>
+                    <Label className="text-xs">Titel</Label>
+                    <Input value={editOgTitle} onChange={(e) => setEditOgTitle(e.target.value)} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Beschreibung</Label>
+                    <Input value={editOgDescription} onChange={(e) => setEditOgDescription(e.target.value)} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Bild-URL</Label>
+                    <Input value={editOgImage} onChange={(e) => setEditOgImage(e.target.value)} />
                   </div>
                 </div>
                 <div className="flex items-center justify-between rounded-md border border-border bg-muted/30 px-3 py-2">
