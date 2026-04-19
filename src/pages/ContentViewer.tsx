@@ -15,37 +15,34 @@ const ContentViewer = () => {
   const username = extractUsername(location.pathname);
   const contentPath = extractContentPath(location.pathname);
 
-  // Favicon dynamisch vom iFrame-Ziel übernehmen
+  // Favicon dynamisch vom iFrame-Ziel übernehmen.
+  // Wichtig: Wegen Same-Origin-Policy können wir das <link rel="icon">
+  // im iframe nicht auslesen. Daher nutzen wir den Google Favicon Service,
+  // der serverseitig das echte Favicon der Domain holt und als PNG liefert –
+  // funktioniert zuverlässig domainübergreifend.
   useEffect(() => {
     if (!targetUrl) return;
     try {
       const url = new URL(targetUrl);
       const domain = url.hostname;
-      const origin = url.origin;
 
-      const setFavicon = (href: string) => {
-        // Alte Favicons entfernen, damit der Browser den neuen Wert nimmt
+      const setFavicon = (href: string, type = "image/png") => {
+        // ALLE bestehenden Favicons (auch das aus index.html) entfernen
         document
-          .querySelectorAll("link[rel~='icon']")
+          .querySelectorAll("link[rel~='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']")
           .forEach((el) => el.parentNode?.removeChild(el));
         const link = document.createElement("link");
         link.id = "favicon";
         link.rel = "icon";
-        link.href = href;
+        link.type = type;
+        // Cache-Buster, damit Browser definitiv neu lädt
+        link.href = `${href}${href.includes("?") ? "&" : "?"}_=${Date.now()}`;
         document.head.appendChild(link);
       };
 
-      // 1. Versuch: direkt /favicon.ico vom Ziel-Origin
-      const directHref = `${origin}/favicon.ico`;
-      const tester = new Image();
-      tester.onload = () => setFavicon(directHref);
-      tester.onerror = () => {
-        // 2. Fallback: Google Favicon-Service (funktioniert für fast alle Domains)
-        setFavicon(
-          `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
-        );
-      };
-      tester.src = directHref;
+      // Primär: Google S2 Favicon Service (höchste Trefferquote, liefert PNG)
+      const googleHref = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      setFavicon(googleHref, "image/png");
     } catch {
       /* ignore */
     }
