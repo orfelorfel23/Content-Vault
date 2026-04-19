@@ -48,6 +48,9 @@ const AdminPanel = ({ onLogout }: Props) => {
   const [newTargetUrl, setNewTargetUrl] = useState(DEFAULT_TARGET_URL);
   const [newMaxViews, setNewMaxViews] = useState("");
   const [newExpiresAt, setNewExpiresAt] = useState("");
+  const [newOgTitle, setNewOgTitle] = useState("");
+  const [newOgDescription, setNewOgDescription] = useState("");
+  const [newOgImage, setNewOgImage] = useState("");
 
   // Route form
   const [newPath, setNewPath] = useState("");
@@ -60,6 +63,9 @@ const AdminPanel = ({ onLogout }: Props) => {
   const [editTargetUrl, setEditTargetUrl] = useState("");
   const [editMaxViews, setEditMaxViews] = useState("");
   const [editExpiresAt, setEditExpiresAt] = useState("");
+  const [editOgTitle, setEditOgTitle] = useState("");
+  const [editOgDescription, setEditOgDescription] = useState("");
+  const [editOgImage, setEditOgImage] = useState("");
 
   const loadLinks = useCallback(async () => {
     try {
@@ -79,9 +85,14 @@ const AdminPanel = ({ onLogout }: Props) => {
         target_url_base: newTargetUrl,
         max_views: newMaxViews ? parseInt(newMaxViews) : null,
         expires_at: newExpiresAt || null,
+        og_title: newOgTitle || null,
+        og_description: newOgDescription || null,
+        og_image: newOgImage || null,
       });
       setShowCreate(false);
-      setNewUsername(""); setNewLabel(""); setNewTargetUrl(DEFAULT_TARGET_URL); setNewMaxViews(""); setNewExpiresAt("");
+      setNewUsername(""); setNewLabel(""); setNewTargetUrl(DEFAULT_TARGET_URL);
+      setNewMaxViews(""); setNewExpiresAt("");
+      setNewOgTitle(""); setNewOgDescription(""); setNewOgImage("");
       loadLinks();
       toast({ title: "Benutzer erstellt" });
     } catch {
@@ -95,6 +106,9 @@ const AdminPanel = ({ onLogout }: Props) => {
     setEditTargetUrl(link.target_url_base);
     setEditMaxViews(link.max_views?.toString() || "");
     setEditExpiresAt(toLocalInput(link.expires_at));
+    setEditOgTitle(link.og_title || "");
+    setEditOgDescription(link.og_description || "");
+    setEditOgImage(link.og_image || "");
   };
 
   const handleSaveEdit = async () => {
@@ -105,6 +119,9 @@ const AdminPanel = ({ onLogout }: Props) => {
         target_url_base: editTargetUrl,
         max_views: editMaxViews ? parseInt(editMaxViews) : null,
         expires_at: editExpiresAt || null,
+        og_title: editOgTitle || null,
+        og_description: editOgDescription || null,
+        og_image: editOgImage || null,
       });
       setEditingLink(null);
       if (selectedLink?.id === updated.id) setSelectedLink(updated);
