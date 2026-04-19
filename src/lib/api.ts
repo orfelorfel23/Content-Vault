@@ -41,6 +41,9 @@ export interface AccessLink {
   views_count: number;
   is_active: boolean;
   created_at: string;
+  og_title?: string | null;
+  og_description?: string | null;
+  og_image?: string | null;
 }
 
 function handleAuthError(res: Response) {
