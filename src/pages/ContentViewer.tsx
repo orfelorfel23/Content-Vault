@@ -70,6 +70,11 @@ const ContentViewer = () => {
       .finally(() => setLoading(false));
   }, [username, contentPath]);
 
+  // Browser-Tab-Titel setzen (für normale Besucher; Crawler bekommen Titel via Backend-SSR)
+  useEffect(() => {
+    if (label) document.title = label;
+  }, [label]);
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
