@@ -288,4 +288,6 @@ Content-Vault/
 
 ## Lizenz
 
-Privates / internes Projekt. Öffentlich ohne separate Open-Source-`LICENSE`-Datei gehostet.
+Der eigene Quellcode und die Konfiguration dieses Projekts stehen unter **CC0 1.0 Universal** (Public Domain) — Details in [`LICENSE`](LICENSE).
+
+Externe Abhängigkeiten, die über Paketmanager oder Docker-Images installiert werden, behalten ihre jeweiligen eigenen Open-Source-Lizenzen.

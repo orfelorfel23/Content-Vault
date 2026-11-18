@@ -288,4 +288,6 @@ Content-Vault/
 
 ## License
 
-Private / Internal Project. Hosted publicly without a separate open-source `LICENSE` file.
+This project's own code and configuration are dedicated to the public domain under **CC0 1.0 Universal** — see [`LICENSE`](LICENSE).
+
+External dependencies installed via package managers or Docker images retain their respective open-source licenses.
